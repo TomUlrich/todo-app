@@ -29,11 +29,31 @@ function formatDate(iso) {
   return `${d}.${m}.${y}`;
 }
 
+// --- Persistence ---
+
+function saveState() {
+  localStorage.setItem('todo-app-state', JSON.stringify(state));
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem('todo-app-state');
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    if (parsed.lists && Array.isArray(parsed.lists)) {
+      state = parsed;
+    }
+  } catch {
+    // corrupt data — start fresh
+  }
+}
+
 // --- Render ---
 
 function render() {
   renderTabs();
   renderMain();
+  saveState();
 }
 
 function renderTabs() {
@@ -355,4 +375,5 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js');
 }
 
+loadState();
 render();
