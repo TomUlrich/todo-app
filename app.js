@@ -1,4 +1,15 @@
-'use strict';
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { firebaseConfig } from './firebase-config.js';
+
+// --- Firebase ---
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let unsubscribe = null;
 
 // --- State ---
 
@@ -29,24 +40,61 @@ function formatDate(iso) {
   return `${d}.${m}.${y}`;
 }
 
-// --- Persistence ---
+// --- Persistence & Sync ---
 
 function saveState() {
-  localStorage.setItem('todo-app-state', JSON.stringify(state));
+  const user = auth.currentUser;
+  if (!user) return;
+  setDoc(doc(db, 'users', user.uid), state);
 }
 
-function loadState() {
-  try {
-    const raw = localStorage.getItem('todo-app-state');
-    if (!raw) return;
-    const parsed = JSON.parse(raw);
-    if (parsed.lists && Array.isArray(parsed.lists)) {
-      state = parsed;
+function startSync(userId) {
+  if (unsubscribe) unsubscribe();
+  unsubscribe = onSnapshot(
+    doc(db, 'users', userId),
+    { includeMetadataChanges: true },
+    (snap) => {
+      if (snap.metadata.hasPendingWrites) return;
+      if (!snap.exists()) return;
+      state = snap.data();
+      renderTabs();
+      renderMain();
     }
-  } catch {
-    // corrupt data — start fresh
+  );
+}
+
+function stopSync() {
+  if (unsubscribe) {
+    unsubscribe();
+    unsubscribe = null;
   }
 }
+
+// --- Auth ---
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    document.getElementById('signin-overlay').classList.add('hidden');
+    document.getElementById('btn-signout').style.display = '';
+    startSync(user.uid);
+  } else {
+    document.getElementById('signin-overlay').classList.remove('hidden');
+    document.getElementById('btn-signout').style.display = 'none';
+    stopSync();
+    state = { activeListId: null, lists: [] };
+    renderTabs();
+    renderMain();
+  }
+});
+
+document.getElementById('btn-signin').addEventListener('click', () => {
+  signInWithPopup(auth, new GoogleAuthProvider())
+    .catch(err => alert('Sign in failed: ' + err.message));
+});
+
+document.getElementById('btn-signout').addEventListener('click', () => {
+  signOut(auth);
+});
 
 // --- Render ---
 
@@ -374,6 +422,3 @@ document.getElementById('file-input').addEventListener('change', (e) => {
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js');
 }
-
-loadState();
-render();

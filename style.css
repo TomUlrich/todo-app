@@ -472,3 +472,43 @@ header {
 #btn-rename-confirm:hover {
   opacity: 0.85;
 }
+
+#signin-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+#signin-overlay.hidden {
+  display: none;
+}
+
+#signin-box {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+#signin-box h1 {
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+#btn-signin {
+  padding: 12px 24px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+#btn-signin:hover {
+  opacity: 0.85;
+}

@@ -20,6 +20,7 @@
       <div id="toolbar">
         <button id="btn-import" title="Import JSON">Import</button>
         <button id="btn-export" title="Export JSON">Export</button>
+        <button id="btn-signout" style="display:none">Sign out</button>
         <input type="file" id="file-input" accept=".json" hidden>
       </div>
     </header>
@@ -91,6 +92,13 @@
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <div id="signin-overlay" class="hidden">
+    <div id="signin-box">
+      <h1>Todo App</h1>
+      <button id="btn-signin">Sign in with Google</button>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
 </body>
 </html>
