@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Todo App</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2c2c2c">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="app">
+
+    <header>
+      <div id="tab-bar">
+        <div id="tabs"></div>
+        <button id="btn-add-list" title="New list">+</button>
+      </div>
+      <div id="toolbar">
+        <button id="btn-import" title="Import JSON">Import</button>
+        <button id="btn-export" title="Export JSON">Export</button>
+        <input type="file" id="file-input" accept=".json" hidden>
+      </div>
+    </header>
+
+    <main>
+      <div id="list-header">
+        <h1 id="list-title"></h1>
+        <div id="list-actions">
+          <button id="btn-rename-list">Rename</button>
+          <button id="btn-delete-list">Delete list</button>
+        </div>
+      </div>
+
+      <div id="todo-list"></div>
+
+      <button id="btn-add-todo">+ Add todo</button>
+    </main>
+
+  </div>
+
+  <div id="modal-overlay" class="hidden">
+    <div id="modal">
+      <h2 id="modal-title">Add todo</h2>
+
+      <label for="input-title">Title <span class="required">*</span></label>
+      <input type="text" id="input-title" placeholder="Todo title">
+
+      <label for="input-notes">Notes</label>
+      <textarea id="input-notes" placeholder="Optional notes" rows="3"></textarea>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="input-priority">Priority</label>
+          <select id="input-priority">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="input-due">Due date</label>
+          <input type="date" id="input-due">
+        </div>
+      </div>
+
+      <div class="form-check">
+        <input type="checkbox" id="input-recurring">
+        <label for="input-recurring">Recurring</label>
+      </div>
+
+      <div id="modal-error" class="hidden">Title is required.</div>
+
+      <div id="modal-buttons">
+        <button id="btn-modal-cancel">Cancel</button>
+        <button id="btn-modal-save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="rename-overlay" class="hidden">
+    <div id="rename-modal">
+      <h2>Rename list</h2>
+      <input type="text" id="input-rename">
+      <div id="rename-error" class="hidden">Name is required.</div>
+      <div id="rename-buttons">
+        <button id="btn-rename-cancel">Cancel</button>
+        <button id="btn-rename-confirm">Rename</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
